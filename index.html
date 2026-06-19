@@ -108,6 +108,19 @@ _start:
         window.editor.setValue(savedCode);
       }
 
+      window.editor.getWrapperElement().addEventListener("mousedown", (e) => {
+        const cm = window.editor;
+        const lastLine = cm.lastLine();
+        const lastLineBottom = cm.lineCoordsForHeight(
+          cm.heightAtLine(lastLine, "local") + cm.defaultTextHeight(), "local"
+        ).bottom;
+        if (e.offsetY > lastLineBottom) {
+          const pos = cm.coordsChar({ left: e.offsetX, top: lastLineBottom - 1 }, "local");
+          cm.setCursor(pos);
+          e.preventDefault();
+        }
+      });
+
       const extC = document.getElementById("extC");
       const savedExtC = localStorage.getItem("riscv-asm-extc");
       if (savedExtC !== null) {
