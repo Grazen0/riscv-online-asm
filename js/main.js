@@ -286,8 +286,12 @@ async function buildStuff(code, ldscript, settings = getAssemblerSettings()) {
     objDumpBox.innerHTML = l.data;
     output.innerHTML += '<span style="color: #22c55e">OK!</span>';
     document.querySelector(".copy-btn").disabled = false;
+    const hexText = binaryBox.textContent;
+    const bytes = (hexText.match(/[0-9a-f]{2}/g) || []).length;
+    document.getElementById("hexTitle").textContent = bytes ? `Hex Dump (${bytes} bytes)` : "Hex Dump";
   } catch (e) {
     output.innerHTML += `<span style="color: #ef4444">${e}</span>`;
+    document.getElementById("hexTitle").textContent = "Hex Dump";
   }
 }
 

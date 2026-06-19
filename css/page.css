@@ -286,12 +286,14 @@ kbd {
 
 .result-panel.featured .result-body {
   flex: 1;
+  min-height: 0;
   max-height: none;
 }
 
 .result-body code {
   font: inherit;
   color: inherit;
+  display: block;
 }
 
 /* Bottom results: console + desensamblado */
