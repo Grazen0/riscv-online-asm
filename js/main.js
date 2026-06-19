@@ -43,6 +43,10 @@ function getAssemblerArgs(sourceFile, outputFile, settings) {
   return args;
 }
 
+function getToolArgs(tool, args) {
+  return `${tool} ${args.join(" ")}`;
+}
+
 async function assemble(code, settings) {
   console.log(`Assembling:\n${code}`);
   const env = { noInitialRun: true };
@@ -242,9 +246,20 @@ async function copyResult(id, button) {
 }
 
 async function doAssemble(code, ldscript, settings) {
+  const output = document.getElementById("output");
+
+  const asArgs = getAssemblerArgs("file.s", "file.o", settings);
+  output.textContent += `$ ${getToolArgs("riscv32-unknown-none-elf-as", asArgs)}\n`;
   const object = await assemble(code, settings);
+
+  const ldArgs = ["-T", "file.ld", "data.o", "-o", "file.elf"];
+  output.textContent += `$ ${getToolArgs("riscv32-unknown-none-elf-ld", ldArgs)}\n`;
   const elf = await link(object, ldscript);
+
+  output.textContent += `$ riscv32-unknown-none-elf-objdump -d file.elf\n`;
   const data = await dump(elf);
+
+  output.textContent += `$ riscv32-unknown-none-elf-objcopy -O binary file.elf file.bin\n`;
   const bin = await getBinary(elf);
 
   return {
@@ -256,17 +271,21 @@ async function doAssemble(code, ldscript, settings) {
 }
 
 async function buildStuff(code, ldscript, settings = getAssemblerSettings()) {
+  const output = document.getElementById("output");
+  const binaryBox = document.getElementById("binaryBox");
+  const objDumpBox = document.getElementById("objDumpBox");
   try {
+    output.textContent = "";
+    binaryBox.textContent = "";
+    objDumpBox.textContent = "";
     document.getElementById("building").style.display = "";
     const l = await doAssemble(code, ldscript, settings);
-    document.getElementById("binaryBox").innerHTML = l.hex;
-    document.getElementById("objDumpBox").innerHTML = l.data;
-    document.getElementById("output").innerHTML =
-      '<span style="color: green">OK!</span>';
+    binaryBox.innerHTML = l.hex;
+    objDumpBox.innerHTML = l.data;
+    output.innerHTML += '<span style="color: #22c55e">OK!</span>';
     document.querySelector(".copy-btn").disabled = false;
   } catch (e) {
-    document.getElementById("output").innerHTML =
-      `<span style="color: red">${e}</span>`;
+    output.innerHTML += `<span style="color: #ef4444">${e}</span>`;
   }
   document.getElementById("building").style.display = "none";
 }

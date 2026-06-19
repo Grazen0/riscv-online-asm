@@ -28,7 +28,7 @@ body {
 }
 
 .shell {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 16px 20px;
   display: flex;
@@ -97,7 +97,13 @@ h1 {
   background: #16a34a;
 }
 
-/* Editor */
+/* Workspace: editor + hex dump side by side */
+.workspace {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 12px;
+}
+
 .editor-wrap {
   display: flex;
   flex-direction: column;
@@ -138,14 +144,7 @@ kbd {
   border-radius: 3px;
 }
 
-/* Results */
-.results {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  padding-bottom: 24px;
-}
-
+/* Result panels */
 .result-panel {
   border: 1px solid var(--border);
   border-radius: 4px;
@@ -194,7 +193,7 @@ kbd {
   font-size: 12px;
   line-height: 1.6;
   color: var(--text);
-  max-height: 260px;
+  max-height: 500px;
   overflow: auto;
   white-space: pre;
   word-wrap: break-word;
@@ -205,11 +204,25 @@ kbd {
   color: inherit;
 }
 
-#output {
-  color: var(--accent);
+/* Bottom results: console + desensamblado */
+.results {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding-bottom: 24px;
 }
 
 /* Responsive */
+@media (max-width: 900px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .editor-wrap .CodeMirror {
+    height: 360px;
+  }
+}
+
 @media (max-width: 768px) {
   .shell {
     padding: 12px 12px;
@@ -230,10 +243,6 @@ kbd {
 
   .header-controls input {
     width: 100%;
-  }
-
-  .editor-wrap .CodeMirror {
-    height: 360px;
   }
 
   .results {

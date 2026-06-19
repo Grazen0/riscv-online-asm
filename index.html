@@ -12,7 +12,7 @@
   <body>
     <div class="shell">
       <header>
-        <h1>RISC-V ASM</h1>
+        <h1>Ensamblador de RISC-V</h1>
         <div class="header-controls">
           <input
             id="archCustomFlags"
@@ -23,14 +23,26 @@
         </div>
       </header>
 
-      <div class="editor-wrap">
-        <textarea id="sourceCodeBox">
-.global _start
-.text
-_start:
-    li      sp, 0x10000
-    j       .
-</textarea>
+      <div class="workspace">
+        <div class="editor-wrap">
+          <textarea id="sourceCodeBox"></textarea>
+        </div>
+
+        <div class="result-panel">
+          <div class="result-header">
+            <span>Hex Dump</span>
+            <button
+              class="copy-btn"
+              disabled
+              onclick="copyResult('binaryBox', this)"
+            >
+              Copiar
+            </button>
+          </div>
+          <pre
+            class="result-body"
+          ><code id="binaryBox">Esperando compilación</code></pre>
+        </div>
       </div>
 
       <div class="build-status" id="building" style="display: none">
@@ -46,20 +58,17 @@ _start:
           <div class="result-header">
             <span>Consola</span>
           </div>
-          <pre class="result-body"><code id="output">Esperando compilación</code></pre>
-        </div>
-        <div class="result-panel">
-          <div class="result-header">
-            <span>Hex Dump</span>
-            <button class="copy-btn" disabled onclick="copyResult('binaryBox', this)">Copiar</button>
-          </div>
-          <pre class="result-body"><code id="binaryBox">Esperando compilación</code></pre>
+          <pre
+            class="result-body"
+          ><code id="output">Esperando compilación</code></pre>
         </div>
         <div class="result-panel">
           <div class="result-header">
             <span>Desensamblado</span>
           </div>
-          <pre class="result-body"><code id="objDumpBox">Esperando compilación</code></pre>
+          <pre
+            class="result-body"
+          ><code id="objDumpBox">Esperando compilación</code></pre>
         </div>
       </div>
     </div>
@@ -77,6 +86,16 @@ _start:
     <script src="js/riscv32-unknown-none-elf-objdump.js" defer></script>
     <script src="js/main.js" defer></script>
     <script>
+      const STORAGE_KEY = "riscv-asm-code";
+      const DEFAULT_CODE = `
+.global _start
+_start:
+`.trim();
+      const savedCode = localStorage.getItem(STORAGE_KEY);
+
+      document.getElementById("sourceCodeBox").value =
+        savedCode ?? DEFAULT_CODE;
+
       window.editor = CodeMirror.fromTextArea(
         document.getElementById("sourceCodeBox"),
         {
@@ -84,6 +103,14 @@ _start:
           mode: { name: "gas", architecture: "riscv" },
         },
       );
+
+      if (savedCode !== null) {
+        window.editor.setValue(savedCode);
+      }
+
+      window.editor.on("change", () => {
+        localStorage.setItem(STORAGE_KEY, window.editor.getValue());
+      });
     </script>
   </body>
 </html>
