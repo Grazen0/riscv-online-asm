@@ -168,14 +168,6 @@ h1 {
   color: #1a1a1a;
 }
 
-/* Build status */
-.build-status {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text-dim);
-  padding: 8px 0;
-}
-
 /* Shortcut hint */
 .shortcut-hint {
   font-family: var(--font-mono);

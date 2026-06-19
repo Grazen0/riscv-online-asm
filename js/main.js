@@ -281,7 +281,6 @@ async function buildStuff(code, ldscript, settings = getAssemblerSettings()) {
     output.textContent = "";
     binaryBox.textContent = "";
     objDumpBox.textContent = "";
-    document.getElementById("building").style.display = "";
     const l = await doAssemble(code, ldscript, settings);
     binaryBox.innerHTML = l.hex;
     objDumpBox.innerHTML = l.data;
@@ -290,7 +289,6 @@ async function buildStuff(code, ldscript, settings = getAssemblerSettings()) {
   } catch (e) {
     output.innerHTML += `<span style="color: #ef4444">${e}</span>`;
   }
-  document.getElementById("building").style.display = "none";
 }
 
 window.doAssemble = doAssemble;
