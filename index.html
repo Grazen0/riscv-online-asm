@@ -14,6 +14,10 @@
       <header>
         <h1>Ensamblador de RISC-V</h1>
         <div class="header-controls">
+          <label class="toggle">
+            <span>Extensión C</span>
+            <input type="checkbox" id="extC" checked />
+          </label>
           <input
             id="archCustomFlags"
             type="text"
@@ -107,6 +111,15 @@ _start:
       if (savedCode !== null) {
         window.editor.setValue(savedCode);
       }
+
+      const extC = document.getElementById("extC");
+      const savedExtC = localStorage.getItem("riscv-asm-extc");
+      if (savedExtC !== null) {
+        extC.checked = savedExtC === "true";
+      }
+      extC.addEventListener("change", () => {
+        localStorage.setItem("riscv-asm-extc", extC.checked);
+      });
 
       window.editor.on("change", () => {
         localStorage.setItem(STORAGE_KEY, window.editor.getValue());

@@ -28,14 +28,17 @@ async function callLd(env) {
 function getAssemblerSettings() {
   const customFlags =
     document.getElementById("archCustomFlags")?.value?.trim() || "";
+  const useC = document.getElementById("extC")?.checked ?? true;
 
   return {
     customFlags,
+    useC,
   };
 }
 
 function getAssemblerArgs(sourceFile, outputFile, settings) {
-  const args = [`-march=rv32ic`, `-mabi=ilp32`, `--gdwarf2`];
+  const march = settings.useC ? "-march=rv32ic" : "-march=rv32i";
+  const args = [march, `-mabi=ilp32`, `--gdwarf2`];
   if (settings.customFlags) {
     args.push(...settings.customFlags.split(/\s+/).filter(Boolean));
   }
