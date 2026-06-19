@@ -13,10 +13,10 @@ BINUTILS_CFLAGS="-DHAVE_PSIGNAL=1 -DELIDE_CODE -D__GNU_LIBRARY__ -O2 -Wno-unused
 BINUTILS_LDFLAGS="-s MODULARIZE=1 -s FORCE_FILESYSTEM=1"
 
 JS_GLUE_FILES=(
-    riscv64-linux-gnu-as
-    riscv64-linux-gnu-objcopy
-    riscv64-linux-gnu-objdump
-    riscv64-linux-gnu-ld
+    riscv32-unknown-none-elf-as
+    riscv32-unknown-none-elf-objcopy
+    riscv32-unknown-none-elf-objdump
+    riscv32-unknown-none-elf-ld
 )
 
 check_prerequisites() {
@@ -48,7 +48,7 @@ build() {
         --disable-doc \
         --build=x86 \
         --host=wasm32 \
-        --target=riscv64-linux-gnu
+        --target=riscv32-unknown-none-elf
 
     echo "==> Building..."
     cat > assets.js <<'JS'
@@ -119,7 +119,7 @@ docker_build() {
             --disable-doc \
             --build=x86 \
             --host=wasm32 \
-            --target=riscv64-linux-gnu
+            --target=riscv32-unknown-none-elf
 
         echo "==> Building..."
         cat > assets.js <<'JS'
