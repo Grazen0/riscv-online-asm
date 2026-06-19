@@ -6,31 +6,23 @@ function withModuleDefaults(env) {
 }
 
 async function callAS(env) {
-  const Module = await new Promise((resolve, reject) => {
-    require(["./riscv32-unknown-none-elf-as"], resolve, reject);
-  });
-  return Module(withModuleDefaults(env));
+  const factory = window["riscv32-unknown-none-elf-as"];
+  return factory(withModuleDefaults(env));
 }
 
 async function callObjdump(env) {
-  const Module = await new Promise((resolve, reject) => {
-    require(["./riscv32-unknown-none-elf-objdump"], resolve, reject);
-  });
-  return Module(withModuleDefaults(env));
+  const factory = window["riscv32-unknown-none-elf-objdump"];
+  return factory(withModuleDefaults(env));
 }
 
 async function callObjcopy(env) {
-  const Module = await new Promise((resolve, reject) => {
-    require(["./riscv32-unknown-none-elf-objcopy"], resolve, reject);
-  });
-  return Module(withModuleDefaults(env));
+  const factory = window["riscv32-unknown-none-elf-objcopy"];
+  return factory(withModuleDefaults(env));
 }
 
 async function callLd(env) {
-  const Module = await new Promise((resolve, reject) => {
-    require(["./riscv32-unknown-none-elf-ld"], resolve, reject);
-  });
-  return Module(withModuleDefaults(env));
+  const factory = window["riscv32-unknown-none-elf-ld"];
+  return factory(withModuleDefaults(env));
 }
 
 function getAssemblerSettings() {
@@ -171,7 +163,7 @@ SECTIONS {
   `;
 
   if (!code.trim()) {
-    $("#output").html('<span style="color: red">Assembly code is empty</span>');
+    document.getElementById("output").innerHTML = '<span style="color: red">Assembly code is empty</span>';
     return;
   }
 
@@ -180,7 +172,6 @@ SECTIONS {
 
 function selectBinaryBox() {
   if (document.selection) {
-    // IE
     var range = document.body.createTextRange();
     range.moveToElementText(document.getElementById("binaryBox"));
     range.select();
@@ -265,30 +256,25 @@ async function doAssemble(code, ldscript, settings) {
 
 async function buildStuff(code, ldscript, settings = getAssemblerSettings()) {
   try {
-    $("#building").show();
+    document.getElementById("building").style.display = "";
     const l = await doAssemble(code, ldscript, settings);
-    $("#binaryBox").html(l.hex);
-    $("#objDumpBox").html(l.data);
-    $("#output").html('<span style="color: green">OK!</span>');
+    document.getElementById("binaryBox").innerHTML = l.hex;
+    document.getElementById("objDumpBox").innerHTML = l.data;
+    document.getElementById("output").innerHTML = '<span style="color: green">OK!</span>';
   } catch (e) {
-    $("#output").html(`<span style="color: red">${e}</span>`);
+    document.getElementById("output").innerHTML = `<span style="color: red">${e}</span>`;
   }
-  $("#building").hide();
+  document.getElementById("building").style.display = "none";
 }
 
-async function main(require) {
-  window.require = require;
-  window.doAssemble = doAssemble;
-  window.buildStuff = buildStuff;
-  window.copyResult = copyResult;
-  window.triggerBuild = triggerBuild;
+window.doAssemble = doAssemble;
+window.buildStuff = buildStuff;
+window.copyResult = copyResult;
+window.triggerBuild = triggerBuild;
 
-  document.addEventListener("keydown", (event) => {
-    if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
-      event.preventDefault();
-      triggerBuild();
-    }
-  });
-}
-
-define(main);
+document.addEventListener("keydown", (event) => {
+  if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+    event.preventDefault();
+    triggerBuild();
+  }
+});

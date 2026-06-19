@@ -1,37 +1,8 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="//fonts.googleapis.com/css?family=Droid+Sans"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="//fonts.googleapis.com/css?family=Droid+Sans+Mono"
-    />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&display=swap"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="css/materialize.min.css"
-      media="screen,projection"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css"
-    />
     <link rel="stylesheet" type="text/css" href="css/page.css" />
     <link rel="stylesheet" type="text/css" href="css/codemirror.css" />
     <script type="text/javascript" src="js/codemirror.js"></script>
@@ -51,8 +22,6 @@
               id="archCustomFlags"
               type="text"
               placeholder="e.g. -g --gdwarf-5"
-              autocomplete="off"
-              oninput="updateAssemblerPreview()"
             />
           </label>
         </header>
@@ -102,7 +71,6 @@ _start:
       </div>
     </div>
 
-    <!--JavaScript at end of body for optimized loading-->
     <link
       rel="preload"
       href="js/as-new.wasm"
@@ -110,42 +78,27 @@ _start:
       type="application/wasm"
       crossorigin="anonymous"
     />
-    <script data-main="js/app" src="js/require.js" async></script>
-    <script type="text/javascript" src="js/materialize.min.js" async></script>
-    <script
-      src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
-      integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI="
-      crossorigin="anonymous"
-    ></script>
+    <script src="js/riscv32-unknown-none-elf-as.js" defer></script>
+    <script src="js/riscv32-unknown-none-elf-ld.js" defer></script>
+    <script src="js/riscv32-unknown-none-elf-objcopy.js" defer></script>
+    <script src="js/riscv32-unknown-none-elf-objdump.js" defer></script>
+    <script src="js/main.js" defer></script>
     <script>
-      $(document).ready(() => {
-        $('i[rel="pre"]').replaceWith(function () {
-          return $("<pre><code>" + $(this).html() + "</code></pre>");
-        });
-        var pres = document.querySelectorAll("pre,kbd,blockquote");
-        for (var i = 0; i < pres.length; i++) {
-          pres[i].addEventListener(
-            "dblclick",
-            function () {
-              var selection = getSelection();
-              var range = document.createRange();
-              range.selectNodeContents(this);
-              selection.removeAllRanges();
-              selection.addRange(range);
-            },
-            false,
-          );
-        }
-        $("#content").show();
-        window.editor = CodeMirror.fromTextArea(
-          document.getElementById("sourceCodeBox"),
-          {
-            lineNumbers: true,
-            theme: "dracula",
-            mode: { name: "gas", architecture: "riscv" },
-          },
-        );
+      document.querySelectorAll('i[rel="pre"]').forEach((el) => {
+        const pre = document.createElement("pre");
+        const code = document.createElement("code");
+        code.innerHTML = el.innerHTML;
+        pre.appendChild(code);
+        el.replaceWith(pre);
       });
+
+      window.editor = CodeMirror.fromTextArea(
+        document.getElementById("sourceCodeBox"),
+        {
+          lineNumbers: true,
+          mode: { name: "gas", architecture: "riscv" },
+        },
+      );
     </script>
   </body>
 </html>

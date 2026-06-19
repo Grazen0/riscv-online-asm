@@ -81,6 +81,8 @@ copy_artifacts() {
             echo "Error: cannot find JS glue for ${tool}" >&2
             exit 1
         fi
+        # Add global fallback so the Module factory is accessible without AMD/CommonJS
+        echo ';if(typeof window!=="undefined")window["'"${tool}"'"]=Module;' >> "${OUTPUT_DIR}/${tool}.js"
     done
 }
 
@@ -152,6 +154,10 @@ JS
                 echo "Error: cannot find JS glue for ${tool}" >&2
                 exit 1
             fi
+            # Add global fallback so the Module factory is accessible without AMD/CommonJS
+            cat >> "${OUTPUT_DIR}/${tool}.js" <<EOLIB
+;if(typeof window!=="undefined")window["${tool}"]=Module;
+EOLIB
         done
 
         chown -R "${HOST_UID}:${HOST_GID}" "${OUTPUT_DIR}"
