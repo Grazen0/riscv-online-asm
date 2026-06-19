@@ -150,22 +150,18 @@ function triggerBuild() {
   const ld = `
 ENTRY(_start)
 
-MEMORY {
-  DATA (rwx) : ORIGIN = 0x00000000, LENGTH = 4096M
-}
-
 SECTIONS {
   .text : {
     *(.text*)
     *(.rodata*)
     . = ALIGN(4);
-  } > DATA
+  }
 
   .data : {
     . = ALIGN(4);
     *(.data*)
     . = ALIGN(4);
-  } > DATA
+  }
 }
   `;
 
@@ -288,7 +284,9 @@ async function buildStuff(code, ldscript, settings = getAssemblerSettings()) {
     document.querySelector(".copy-btn").disabled = false;
     const hexText = binaryBox.textContent;
     const bytes = (hexText.match(/[0-9a-f]{2}/g) || []).length;
-    document.getElementById("hexTitle").textContent = bytes ? `Hex Dump (${bytes} bytes)` : "Hex Dump";
+    document.getElementById("hexTitle").textContent = bytes
+      ? `Hex Dump (${bytes} bytes)`
+      : "Hex Dump";
   } catch (e) {
     output.innerHTML += `<span style="color: #ef4444">${e}</span>`;
     document.getElementById("hexTitle").textContent = "Hex Dump";
