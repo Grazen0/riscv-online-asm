@@ -163,7 +163,8 @@ SECTIONS {
   `;
 
   if (!code.trim()) {
-    document.getElementById("output").innerHTML = '<span style="color: red">Assembly code is empty</span>';
+    document.getElementById("output").innerHTML =
+      '<span style="color: red">Assembly code is empty</span>';
     return;
   }
 
@@ -228,7 +229,7 @@ async function copyResult(id, button) {
     if (button) {
       const original = button.dataset.label || button.textContent;
       button.dataset.label = original;
-      button.textContent = "Copied";
+      button.textContent = "Copiado";
       button.classList.add("is-copied");
       window.setTimeout(() => {
         button.textContent = original;
@@ -260,9 +261,12 @@ async function buildStuff(code, ldscript, settings = getAssemblerSettings()) {
     const l = await doAssemble(code, ldscript, settings);
     document.getElementById("binaryBox").innerHTML = l.hex;
     document.getElementById("objDumpBox").innerHTML = l.data;
-    document.getElementById("output").innerHTML = '<span style="color: green">OK!</span>';
+    document.getElementById("output").innerHTML =
+      '<span style="color: green">OK!</span>';
+    document.querySelector(".copy-btn").disabled = false;
   } catch (e) {
-    document.getElementById("output").innerHTML = `<span style="color: red">${e}</span>`;
+    document.getElementById("output").innerHTML =
+      `<span style="color: red">${e}</span>`;
   }
   document.getElementById("building").style.display = "none";
 }

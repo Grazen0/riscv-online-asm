@@ -3,70 +3,63 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" type="text/css" href="css/page.css" />
     <link rel="stylesheet" type="text/css" href="css/codemirror.css" />
+    <link rel="stylesheet" type="text/css" href="css/page.css" />
     <script type="text/javascript" src="js/codemirror.js"></script>
     <script type="text/javascript" src="js/gas.js"></script>
-    <title>Online RISC-V Assembler</title>
+    <title>Ensamblador RISC-V en línea</title>
   </head>
   <body>
-    <div class="page-shell">
-      <div class="container" id="content">
-        <header class="hero-panel">
-          <div>
-            <h1>Ensamblador de RISC-V</h1>
-          </div>
-          <label class="control-field control-field-wide">
-            <span>Flags adicionales</span>
-            <input
-              id="archCustomFlags"
-              type="text"
-              placeholder="e.g. -g --gdwarf-5"
-            />
-          </label>
-        </header>
-        <div class="workspace-grid">
-          <section class="panel editor-panel">
-            <form>
-              <div class="input-field editor-field">
-                <textarea id="sourceCodeBox">
+    <div class="shell">
+      <header>
+        <h1>RISC-V ASM</h1>
+        <div class="header-controls">
+          <input
+            id="archCustomFlags"
+            type="text"
+            placeholder="Flags adicionales"
+          />
+          <button class="build-btn" onclick="triggerBuild()">Compilar</button>
+        </div>
+      </header>
+
+      <div class="editor-wrap">
+        <textarea id="sourceCodeBox">
 .global _start
 .text
 _start:
     li      sp, 0x10000
     j       .
-</textarea
-                >
-              </div>
-            </form>
-          </section>
-        </div>
-        <div class="action-row">
-          <div class="action-copy">
-            <strong>Build current workspace</strong>
-            <span
-              >O usa <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>Enter</kbd> para
-              compilar.</span
-            >
+</textarea>
+      </div>
+
+      <div class="build-status" id="building" style="display: none">
+        Compilando&hellip;
+      </div>
+
+      <div class="shortcut-hint">
+        <kbd>Ctrl</kbd>+<kbd>Enter</kbd> para compilar
+      </div>
+
+      <div class="results">
+        <div class="result-panel">
+          <div class="result-header">
+            <span>Consola</span>
           </div>
-          <a class="btn build-btn" onClick="triggerBuild()">Build</a>
+          <pre class="result-body"><code id="output">Esperando compilación</code></pre>
         </div>
-        <div class="container panel build-panel" id="building">
-          <p>Please wait while building</p>
-          <div class="progress">
-            <div class="indeterminate"></div>
+        <div class="result-panel">
+          <div class="result-header">
+            <span>Hex Dump</span>
+            <button class="copy-btn" disabled onclick="copyResult('binaryBox', this)">Copiar</button>
           </div>
+          <pre class="result-body"><code id="binaryBox">Esperando compilación</code></pre>
         </div>
-        <div class="results-grid">
-          <pre
-            class="code code-res"
-          ><label>Console</label><code id="output">Waiting for build</code></pre>
-          <pre
-            class="code code-res compact-result"
-          ><label>Code<BR/>Hex Dump</label><button type="button" class="result-copy" onClick="copyResult('binaryBox', this)">Copiar</button><code id="binaryBox">Waiting for build</code></pre>
-          <pre
-            class="code code-res wide-result"
-          ><label>Objdump Code<BR/>Disassembly</label><code id="objDumpBox">Waiting for build</code></pre>
+        <div class="result-panel">
+          <div class="result-header">
+            <span>Desensamblado</span>
+          </div>
+          <pre class="result-body"><code id="objDumpBox">Esperando compilación</code></pre>
         </div>
       </div>
     </div>
@@ -84,14 +77,6 @@ _start:
     <script src="js/riscv32-unknown-none-elf-objdump.js" defer></script>
     <script src="js/main.js" defer></script>
     <script>
-      document.querySelectorAll('i[rel="pre"]').forEach((el) => {
-        const pre = document.createElement("pre");
-        const code = document.createElement("code");
-        code.innerHTML = el.innerHTML;
-        pre.appendChild(code);
-        el.replaceWith(pre);
-      });
-
       window.editor = CodeMirror.fromTextArea(
         document.getElementById("sourceCodeBox"),
         {
